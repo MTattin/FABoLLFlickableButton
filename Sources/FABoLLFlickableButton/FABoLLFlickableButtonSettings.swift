@@ -1,16 +1,14 @@
 //
-//  FlickableButtonSettings.swift
+//  FABoLLFlickableButtonSettings.swift
 //  
 //
 //  Created by Masakiyo Tachikawa on 2020/02/22.
 //
 import UIKit
 ///
-/// FlickableButtonSettings
+/// - Tag: FABoLLFlickableButtonSettings
 ///
-/// - Tag: FlickableButtonSettings
-///
-public struct FlickableButtonSettings {
+public struct FABoLLFlickableButtonSettings {
     ///
     // MARK: -------------------- properties
     ///

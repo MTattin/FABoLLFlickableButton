@@ -1,14 +1,36 @@
 //
-//  FlickableButton.swift
+//  FABoLLFlickableButton.swift
 //
 //  Created by Masakiyo Tachikawa on 2020/02/21.
 //  Copyright © 2020 FABoLL. All rights reserved.
+//
+//  Copyright 2020 Masakiyo Tachikawa
+//
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
+//
+//  The above copyright notice and this permission notice shall be included in
+//  all copies or substantial portions of the Software.
+//
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+//  THE SOFTWARE.
 //
 import UIKit
 ///
 /// Added top, bottom, left, right swipe action
 ///
-public class FlickableButton: UIButton {
+/// - Tag: FABoLLFlickableButton
+///
+public class FABoLLFlickableButton: UIButton {
     ///
     // MARK: ------------------------------ enum
     ///
@@ -26,7 +48,7 @@ public class FlickableButton: UIButton {
     ///
     ///
     ///
-    private var _settings: FlickableButtonSettings = FlickableButtonSettings.init(
+    private var _settings: FABoLLFlickableButtonSettings = FABoLLFlickableButtonSettings.init(
         views: (
             up: nil,
             left: nil,
@@ -84,7 +106,7 @@ public class FlickableButton: UIButton {
     ///
     ///
     private func _getTarget(
-        _ direction: FlickableButton._PanDirection
+        _ direction: FABoLLFlickableButton._PanDirection
     ) -> (
         view: UIView?,
         center: CGPoint,
@@ -106,18 +128,18 @@ public class FlickableButton: UIButton {
     ///
     ///
     ///
-    private func _convert(from: UISwipeGestureRecognizer.Direction) -> FlickableButton._PanDirection {
+    private func _convert(from: UISwipeGestureRecognizer.Direction) -> FABoLLFlickableButton._PanDirection {
         switch from {
         case .up:
-            return FlickableButton._PanDirection.up
+            return FABoLLFlickableButton._PanDirection.up
         case .left:
-            return FlickableButton._PanDirection.left
+            return FABoLLFlickableButton._PanDirection.left
         case .down:
-            return FlickableButton._PanDirection.down
+            return FABoLLFlickableButton._PanDirection.down
         case .right:
-            return FlickableButton._PanDirection.right
+            return FABoLLFlickableButton._PanDirection.right
         default:
-            return FlickableButton._PanDirection.none
+            return FABoLLFlickableButton._PanDirection.none
         }
     }
     ///
@@ -129,10 +151,10 @@ public class FlickableButton: UIButton {
         print("FlickableButton released")
     }
     ///
-    ///
+    /// `settings` define is [FABoLLFlickableButtonSettings](x-source-tag://FABoLLFlickableButtonSettings).
     ///
     public func setFlickable(
-        settings: FlickableButtonSettings,
+        settings: FABoLLFlickableButtonSettings,
         callbackUp: (() -> Void)?,
         callbackLeft: (() -> Void)?,
         callbackDown: (() -> Void)?,
@@ -197,7 +219,7 @@ public class FlickableButton: UIButton {
     ///
     ///
     @objc private func _swiped(_ gesture: UISwipeGestureRecognizer) {
-        let direction: FlickableButton._PanDirection = self._convert(from: gesture.direction)
+        let direction: FABoLLFlickableButton._PanDirection = self._convert(from: gesture.direction)
         if direction == .none {
             return
         }
@@ -244,7 +266,7 @@ public class FlickableButton: UIButton {
         }
         if gesture.state == .changed {
             let point: CGPoint = gesture.location(in: self)
-            let direction: FlickableButton._PanDirection = self._getPanDirection(point)
+            let direction: FABoLLFlickableButton._PanDirection = self._getPanDirection(point)
             if direction == .none {
                 return
             }
@@ -252,7 +274,7 @@ public class FlickableButton: UIButton {
             return
         }
         let point: CGPoint = gesture.location(in: self)
-        let direction: FlickableButton._PanDirection = self._getPanDirection(point)
+        let direction: FABoLLFlickableButton._PanDirection = self._getPanDirection(point)
         if direction == .none {
             self._hideAllFlickableView()
         } else {
@@ -264,7 +286,7 @@ public class FlickableButton: UIButton {
     ///
     private func _showAndHideAllFlickableViews(isHidden: Bool) {
         self.alpha = (isHidden) ? 1.0 : 0.5
-        FlickableButton._PanDirection.allCases.forEach { (direction: FlickableButton._PanDirection) in
+        FABoLLFlickableButton._PanDirection.allCases.forEach { (direction: FABoLLFlickableButton._PanDirection) in
             let target: (view: UIView?, center: CGPoint, callback: (() -> Void)?) = self._getTarget(direction)
             target.view?.frame.size = self.frame.size
             target.view?.center = target.center
@@ -274,7 +296,7 @@ public class FlickableButton: UIButton {
     ///
     ///
     ///
-    private func _getPanDirection(_ point: CGPoint) -> FlickableButton._PanDirection {
+    private func _getPanDirection(_ point: CGPoint) -> FABoLLFlickableButton._PanDirection {
         if
             abs(point.x - self._panStart.x) < self.frame.width * 0.5 &&
             abs(point.y - self._panStart.y) < self.frame.height * 0.5
@@ -285,23 +307,23 @@ public class FlickableButton: UIButton {
         let diffY: CGFloat = point.y - self._panStart.y
         if abs(diffX) < abs(diffY) {
             return (diffY < 0.0)
-                ? FlickableButton._PanDirection.up
-                : FlickableButton._PanDirection.down
+                ? FABoLLFlickableButton._PanDirection.up
+                : FABoLLFlickableButton._PanDirection.down
         } else {
             return (diffX < 0.0)
-                ? FlickableButton._PanDirection.left
-                : FlickableButton._PanDirection.right
+                ? FABoLLFlickableButton._PanDirection.left
+                : FABoLLFlickableButton._PanDirection.right
         }
     }
     ///
     /// Hide all Flickable views except target (parameter `to`)
     ///
-    private func _panShowFlickableView(_ to: FlickableButton._PanDirection) {
-        FlickableButton._PanDirection.allCases
-            .filter { (direction: FlickableButton._PanDirection) -> Bool in
+    private func _panShowFlickableView(_ to: FABoLLFlickableButton._PanDirection) {
+        FABoLLFlickableButton._PanDirection.allCases
+            .filter { (direction: FABoLLFlickableButton._PanDirection) -> Bool in
                 direction != to
             }
-            .forEach { (direction: FlickableButton._PanDirection) in
+            .forEach { (direction: FABoLLFlickableButton._PanDirection) in
                 self._getTarget(direction).view?.alpha = 0.0
             }
     }
@@ -326,7 +348,7 @@ public class FlickableButton: UIButton {
     ///
     ///
     ///
-    private func _panExecuteFlickableView(_ direction: FlickableButton._PanDirection) {
+    private func _panExecuteFlickableView(_ direction: FABoLLFlickableButton._PanDirection) {
         UIView.animate(
             withDuration: 0.25,
             delay: 0.5,

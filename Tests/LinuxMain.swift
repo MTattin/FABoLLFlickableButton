@@ -1,7 +1,7 @@
 import XCTest
 
-import FlickableButtonTests
+import FABoLLFlickableButtonTests
 
 var tests = [XCTestCaseEntry]()
-tests += FlickableButtonTests.allTests()
+tests += FABoLLFlickableButtonTests.allTests()
 XCTMain(tests)
