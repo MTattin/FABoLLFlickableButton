@@ -4,6 +4,10 @@ You can add flick action to UIButton.
 If you use `FABoLLFlickableButton`, you can receive callback from  swipe gestures.
 
 
+# License
+MIT
+
+
 # Dependency
 
 - iOS, >=11
