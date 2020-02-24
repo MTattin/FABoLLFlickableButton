@@ -349,12 +349,12 @@ public class FABoLLFlickableButton: UIButton {
     ///
     ///
     private func _panExecuteFlickableView(_ direction: FABoLLFlickableButton._PanDirection) {
+        self.alpha = 1.0
         UIView.animate(
             withDuration: 0.25,
             delay: 0.5,
             options: UIView.AnimationOptions.curveEaseIn,
             animations: { [weak self] in
-                self?.alpha = 1.0
                 self?._getTarget(direction).view?.alpha = 0.0
             },
             completion: { (_) in }
