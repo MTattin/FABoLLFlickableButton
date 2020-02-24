@@ -38,14 +38,14 @@ down.text = "⚡️"
 let left: UIImageView = UIImageView
     .init(image: UIImage.init(named: "star")!
     .withRenderingMode(UIImage.RenderingMode.alwaysTemplate))
-left.tintColor = Skin.CmnColors.Apple.ApplePurple
+left.tintColor = UIColor.red
 ///
 /// An appeared view when you swipe right
 ///
 let right: UIImageView = UIImageView.init(image: UIImage.init(named: "star")!)
-right.backgroundColor = Skin.CmnColors.Apple.ApplePurple
+right.backgroundColor = UIColor.blue
 right.clipsToBounds = true
-right.layer.cornerRadius = self.button44.frame.size.width * 0.5
+right.layer.cornerRadius = self.button.frame.size.width * 0.5
 ///
 /// Add flick actions
 ///
