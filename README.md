@@ -62,7 +62,8 @@ self.button.setFlickable(
             left: 10.0,
             down: 5.0,
             right: 10.0
-        )
+        ),
+        animationDuration: nil
     ),
     callbackUp: {
         print("up")
