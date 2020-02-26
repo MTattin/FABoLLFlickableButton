@@ -236,12 +236,13 @@ public class FABoLLFlickableButton: UIButton {
         }
         view.frame.size = self.frame.size
         view.center = center
+        self.clipsToBounds = false
         UIView.animate(
             withDuration: 0.25,
             animations: { [weak view] in
                 view?.alpha = 1.0
             }
-        ) { [weak view] (_) in
+        ) { [weak self, weak view] (_) in
             UIView.animate(
                 withDuration: 0.25,
                 delay: 0.5,
@@ -249,7 +250,9 @@ public class FABoLLFlickableButton: UIButton {
                 animations: { [weak view] in
                     view?.alpha = 0.0
                 },
-                completion: { (_) in }
+                completion: { [weak self] (_) in
+                    self?.clipsToBounds = true
+                }
             )
         }
     }
@@ -260,6 +263,7 @@ public class FABoLLFlickableButton: UIButton {
     ///
     @objc private func _longPressed(_ gesture: UILongPressGestureRecognizer) {
         if gesture.state == .began {
+            self.clipsToBounds = false
             self._showAndHideAllFlickableViews(isHidden: false)
             self._panStart = gesture.location(in: self)
             return
@@ -342,7 +346,9 @@ public class FABoLLFlickableButton: UIButton {
                 self?._settings.views.down?.alpha = 0.0
                 self?._settings.views.right?.alpha = 0.0
             },
-            completion: { (_) in }
+            completion: { [weak self] (_) in
+                self?.clipsToBounds = true
+            }
         )
     }
     ///
@@ -357,7 +363,9 @@ public class FABoLLFlickableButton: UIButton {
             animations: { [weak self] in
                 self?._getTarget(direction).view?.alpha = 0.0
             },
-            completion: { (_) in }
+            completion: { [weak self] (_) in
+                self?.clipsToBounds = true
+            }
         )
         self._getTarget(direction).callback?()
     }
