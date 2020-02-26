@@ -55,12 +55,8 @@ public class FABoLLFlickableButton: UIButton {
             down: nil,
             right: nil
         ),
-        margins: (
-            up: 0.0,
-            left: 0.0,
-            down: 0.0,
-            right: 0.0
-        )
+        margins: nil,
+        animationDuration: nil
     )
     ///
     ///
@@ -238,14 +234,17 @@ public class FABoLLFlickableButton: UIButton {
         view.center = center
         self.clipsToBounds = false
         UIView.animate(
-            withDuration: 0.25,
+            withDuration: self._settings.animationDuration.show,
             animations: { [weak view] in
                 view?.alpha = 1.0
             }
         ) { [weak self, weak view] (_) in
+            guard let self = self else {
+                return
+            }
             UIView.animate(
-                withDuration: 0.25,
-                delay: 0.5,
+                withDuration: self._settings.animationDuration.hide,
+                delay: self._settings.animationDuration.stay,
                 options: UIView.AnimationOptions.curveEaseIn,
                 animations: { [weak view] in
                     view?.alpha = 0.0
@@ -336,8 +335,8 @@ public class FABoLLFlickableButton: UIButton {
     ///
     private func _hideAllFlickableView() {
         UIView.animate(
-            withDuration: 0.25,
-            delay: 0.25,
+            withDuration: self._settings.animationDuration.hide,
+            delay: self._settings.animationDuration.stay,
             options: UIView.AnimationOptions.curveEaseIn,
             animations: { [weak self] in
                 self?.alpha = 1.0
@@ -357,8 +356,8 @@ public class FABoLLFlickableButton: UIButton {
     private func _panExecuteFlickableView(_ direction: FABoLLFlickableButton._PanDirection) {
         self.alpha = 1.0
         UIView.animate(
-            withDuration: 0.25,
-            delay: 0.5,
+            withDuration: self._settings.animationDuration.hide,
+            delay: self._settings.animationDuration.stay,
             options: UIView.AnimationOptions.curveEaseIn,
             animations: { [weak self] in
                 self?._getTarget(direction).view?.alpha = 0.0

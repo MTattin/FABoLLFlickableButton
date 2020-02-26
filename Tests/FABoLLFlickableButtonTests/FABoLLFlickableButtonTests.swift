@@ -91,7 +91,8 @@ final class FABoLLFlickableButtonTests: XCTestCase {
                     left: 10.0,
                     down: 10.0,
                     right: 10.0
-                )
+                ),
+                animationDuration: nil
             ),
             callbackUp: nil,
             callbackLeft: nil,
@@ -130,7 +131,8 @@ final class FABoLLFlickableButtonTests: XCTestCase {
                     left: 10.0,
                     down: 10.0,
                     right: 10.0
-                )
+                ),
+                animationDuration: nil
             ),
             callbackUp: nil,
             callbackLeft: nil,
@@ -162,12 +164,8 @@ final class FABoLLFlickableButtonTests: XCTestCase {
                     down: nil,
                     right: self._right
                 ),
-                margins: (
-                    up: 10.0,
-                    left: 10.0,
-                    down: 10.0,
-                    right: 10.0
-                )
+                margins: nil,
+                animationDuration: nil
             ),
             callbackUp: nil,
             callbackLeft: nil,
@@ -199,12 +197,8 @@ final class FABoLLFlickableButtonTests: XCTestCase {
                     down: nil,
                     right: nil
                 ),
-                margins: (
-                    up: 0.0,
-                    left: 0.0,
-                    down: 0.0,
-                    right: 0.0
-                )
+                margins: nil,
+                animationDuration: nil
             ),
             callbackUp: nil,
             callbackLeft: nil,
