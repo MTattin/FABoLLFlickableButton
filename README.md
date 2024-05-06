@@ -1,68 +1,41 @@
 # FABoLLFlickableButton
 
+[![FABoLL](https://custom-icon-badges.herokuapp.com/badge/license-FABoLL-8BB80A.svg?logo=law&logoColor=white)]()　[![iOS 16.0](https://custom-icon-badges.herokuapp.com/badge/iOS-16.0-007bff.svg?logo=apple&logoColor=white)]()　[![Xcode 15.3](https://custom-icon-badges.herokuapp.com/badge/Xcode-15.3-007bff.svg?logo=Xcode&logoColor=white)]()　[![Swift 5.9](https://custom-icon-badges.herokuapp.com/badge/Swift-5.9-df5c43.svg?logo=Swift&logoColor=white)]()
+
 You can add flick action to UIButton.  
 If you use `FABoLLFlickableButton`, you can receive callback from  swipe gestures.
-
-
-# License
-MIT
-
-
-# Dependency
-
-- iOS, >=14
-- Xcode, >= 13
-
 
 # Usage
 
 ```
-///
-/// An appeared view when you swipe up
-///
-let up: UILabel = UILabel.init()
-up.backgroundColor = UIColor.brown
-up.textColor = UIColor.white
-up.textAlignment = NSTextAlignment.center
+// An appeared view when you swipe up
+let up = UILabel()
+up.backgroundColor = .brown
+up.textColor = .white
+up.textAlignment = .center
 up.text = "UP"
-///
-/// An appeared view when you swipe down
-///
-let down: UILabel = UILabel.init()
-down.backgroundColor = UIColor.clear
-down.textAlignment = NSTextAlignment.center
+
+// An appeared view when you swipe down
+let down = UILabel()
+down.backgroundColor = .clear
+down.textAlignment = .center
 down.text = "⚡️"
-///
-/// An appeared view when you swipe left
-///
-let left: UIImageView = UIImageView
-    .init(image: UIImage.init(named: "star")!
-    .withRenderingMode(UIImage.RenderingMode.alwaysTemplate))
-left.tintColor = UIColor.red
-///
-/// An appeared view when you swipe right
-///
-let right: UIImageView = UIImageView.init(image: UIImage.init(named: "star")!)
-right.backgroundColor = UIColor.blue
+
+// An appeared view when you swipe left
+let left = UIImageView(image: UIImage(named: "star")!.withRenderingMode(.alwaysTemplate))
+left.tintColor = .red
+
+// An appeared view when you swipe right
+let right = UIImageView(image: UIImage(named: "star")!)
+right.backgroundColor = .blue
 right.clipsToBounds = true
-right.layer.cornerRadius = self.button.frame.size.width * 0.5
-///
+right.layer.cornerRadius = button.frame.size.width * 0.5
+
 /// Add flick actions
-///
-self.button.setFlickable(
-    settings: FABoLLFlickableButtonSettings.init(
-        views: (
-            up: up,
-            left: left,
-            down: down,
-            right: right
-        ),
-        margins: (
-            up: 5.0,
-            left: 10.0,
-            down: 5.0,
-            right: 10.0
-        ),
+button.setFlickable(
+    settings: FABoLLFlickableButtonSettings(
+        views: (up: up, left: left, down: down, right: right),
+        margins: (up: 5., left: 10, down: 5, right: 10),
         animationDuration: nil
     ),
     callbackUp: {

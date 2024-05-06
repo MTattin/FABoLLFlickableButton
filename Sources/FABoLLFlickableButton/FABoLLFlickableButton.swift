@@ -24,31 +24,38 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 //
+//  © 2023 Masakiyo Tachikawa
+//
+
 import UIKit
-///
+
+// MARK: - FABoLLFlickableButton
+
 /// Added top, bottom, left, right swipe action
-///
-/// - Tag: FABoLLFlickableButton
-///
 public class FABoLLFlickableButton: UIButton {
-    ///
-    // MARK: ------------------------------ enum
-    ///
-    ///
-    ///
-    private enum _PanDirection: Int, CaseIterable {
+
+    // MARK: - typealias
+
+    private typealias FlickableView = (view: UIView?, center: CGPoint, callback: (() -> Void)?)
+
+    // MARK: - enum
+
+    fileprivate enum PanDirection: Int, CaseIterable {
+
         case none
+
         case up
+
         case left
+
         case down
+
         case right
     }
-    ///
-    // MARK: ------------------------------ properties
-    ///
-    ///
-    ///
-    private var _settings: FABoLLFlickableButtonSettings = FABoLLFlickableButtonSettings.init(
+
+    // MARK: - Properties
+
+    private var settings = FABoLLFlickableButtonSettings(
         views: (
             up: nil,
             left: nil,
@@ -58,97 +65,56 @@ public class FABoLLFlickableButton: UIButton {
         margins: nil,
         animationDuration: nil
     )
-    ///
-    ///
-    ///
-    private var _upCenter: CGPoint {
-        return CGPoint.init(
-            x: self.center.x,
-            y: self.center.y - self.frame.height - self._settings.margins.up
-        )
-    }
-    private var _leftCenter: CGPoint {
-        return CGPoint.init(
-            x: self.center.x - self.frame.width - self._settings.margins.left,
-            y: self.center.y
-        )
-    }
-    private var _downCenter: CGPoint {
-        return CGPoint.init(
-            x: self.center.x,
-            y: self.center.y + self.frame.height + self._settings.margins.up
-        )
-    }
-    private var _rightCenter: CGPoint {
-        return CGPoint.init(
-            x: self.center.x + self.frame.width + self._settings.margins.left,
-            y: self.center.y
-        )
-    }
-    ///
-    ///
-    ///
-    private var _callbackUp: (() -> Void)?
-    private var _callbackLeft: (() -> Void)?
-    private var _callbackDown: (() -> Void)?
-    private var _callbackRight: (() -> Void)?
-    ///
-    ///
-    ///
-    private var _panStart: CGPoint = CGPoint.zero
-    ///
-    // MARK: -------------------- properties method
-    ///
-    ///
-    ///
-    private func _getTarget(
-        _ direction: FABoLLFlickableButton._PanDirection
-    ) -> (
-        view: UIView?,
-        center: CGPoint,
-        callback: (() -> Void)?
-    ) {
+
+    private var upCenter: CGPoint { CGPoint(x: center.x, y: center.y - frame.height - settings.margins.up) }
+
+    private var leftCenter: CGPoint { CGPoint(x: center.x - frame.width - settings.margins.left, y: center.y) }
+
+    private var downCenter: CGPoint { CGPoint(x: center.x, y: center.y + frame.height + settings.margins.up) }
+
+    private var rightCenter: CGPoint { CGPoint(x: center.x + frame.width + settings.margins.left, y: center.y) }
+
+    private var callbackUp: (() -> Void)?
+
+    private var callbackLeft: (() -> Void)?
+
+    private var callbackDown: (() -> Void)?
+
+    private var callbackRight: (() -> Void)?
+
+    private var panStart: CGPoint = .zero
+
+    private var showDuration: Double { settings.animationDuration.show }
+
+    private var hideDuration: Double { settings.animationDuration.hide }
+
+    private var stayDuration: Double { settings.animationDuration.stay }
+
+
+    // MARK: - Conveniences
+
+    private func getTarget(_ direction: FABoLLFlickableButton.PanDirection) -> FlickableView {
         switch direction {
         case .none:
-            return (nil, self.center, nil)
+            (nil, center, nil)
         case .up:
-            return (self._settings.views.up, self._upCenter, self._callbackUp)
+            (settings.views.up, upCenter, callbackUp)
         case .left:
-            return (self._settings.views.left, self._leftCenter, self._callbackLeft)
+            (settings.views.left, leftCenter, callbackLeft)
         case .down:
-            return (self._settings.views.down, self._downCenter, self._callbackDown)
+            (settings.views.down, downCenter, callbackDown)
         case .right:
-            return (self._settings.views.right, self._rightCenter, self._callbackRight)
+            (settings.views.right, rightCenter, callbackRight)
         }
     }
-    ///
-    ///
-    ///
-    private func _convert(from: UISwipeGestureRecognizer.Direction) -> FABoLLFlickableButton._PanDirection {
-        switch from {
-        case .up:
-            return FABoLLFlickableButton._PanDirection.up
-        case .left:
-            return FABoLLFlickableButton._PanDirection.left
-        case .down:
-            return FABoLLFlickableButton._PanDirection.down
-        case .right:
-            return FABoLLFlickableButton._PanDirection.right
-        default:
-            return FABoLLFlickableButton._PanDirection.none
-        }
-    }
-    ///
-    // MARK: -------------------- life cycle
-    ///
-    ///
-    ///
+
+    // MARK: - Life cycle
+
     deinit {
         print("FlickableButton released")
     }
-    ///
-    /// `settings` define is [FABoLLFlickableButtonSettings](x-source-tag://FABoLLFlickableButtonSettings).
-    ///
+
+    /// `settings` define is FABoLLFlickableButtonSettings.
     public func setFlickable(
         settings: FABoLLFlickableButtonSettings,
         callbackUp: (() -> Void)?,
@@ -156,216 +122,168 @@ public class FABoLLFlickableButton: UIButton {
         callbackDown: (() -> Void)?,
         callbackRight: (() -> Void)?
     ) {
-        self._settings = settings
-        self._callbackUp = callbackUp
-        self._callbackLeft = callbackLeft
-        self._callbackDown = callbackDown
-        self._callbackRight = callbackRight
-        self._setViews()
-        self._setGesture()
+        self.settings = settings
+        self.callbackUp = callbackUp
+        self.callbackLeft = callbackLeft
+        self.callbackDown = callbackDown
+        self.callbackRight = callbackRight
+        setViews()
+        setGesture()
     }
-    ///
-    ///
-    ///
-    private func _setViews() {
+
+    private func setViews() {
         [
-            self._settings.views.up,
-            self._settings.views.left,
-            self._settings.views.down,
-            self._settings.views.right,
-        ].forEach { (item: UIView?) in
-            guard let view: UIView = item else {
-                return
-            }
+            settings.views.up,
+            settings.views.left,
+            settings.views.down,
+            settings.views.right,
+        ].forEach { view in
+            guard let view else { return }
             view.isUserInteractionEnabled = false
-            view.alpha = 0.0
-            self.superview?.addSubview(view)
+            view.alpha = 0
+            superview?.addSubview(view)
         }
     }
-    ///
-    ///
-    ///
-    private func _setGesture() {
+
+    private func setGesture() {
         [
             UISwipeGestureRecognizer.Direction.up,
             UISwipeGestureRecognizer.Direction.left,
             UISwipeGestureRecognizer.Direction.down,
             UISwipeGestureRecognizer.Direction.right,
-        ].forEach { (direction: UISwipeGestureRecognizer.Direction) in
-            let swipe: UISwipeGestureRecognizer = UISwipeGestureRecognizer.init(
-                target: self,
-                action: #selector(self._swiped(_:))
-            )
+        ].forEach { direction in
+            let swipe = UISwipeGestureRecognizer(target: self, action: #selector(swiped))
             swipe.direction = direction
-            self.addGestureRecognizer(swipe)
+            addGestureRecognizer(swipe)
         }
-        ///
-        ///
-        ///
-        let long: UILongPressGestureRecognizer = UILongPressGestureRecognizer.init(
-            target: self,
-            action: #selector(self._longPressed(_:))
-        )
-        long.minimumPressDuration = 0.5
-        self.addGestureRecognizer(long)
+
+        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(longPressed))
+        longPress.minimumPressDuration = 0.5
+        addGestureRecognizer(longPress)
     }
-    ///
-    // MARK: -------------------- swipe
-    ///
-    ///
-    ///
-    @objc private func _swiped(_ gesture: UISwipeGestureRecognizer) {
-        let direction: FABoLLFlickableButton._PanDirection = self._convert(from: gesture.direction)
+
+    // MARK: - Swipe
+
+    @objc private func swiped(_ gesture: UISwipeGestureRecognizer) {
+        let direction: FABoLLFlickableButton.PanDirection = gesture.direction.panDirection
         if direction == .none {
             return
         }
-        let target: (view: UIView?, center: CGPoint, callback: (() -> Void)?) = self._getTarget(direction)
-        self._showFlickableView(target.view, target.center)
+        let target: FlickableView = getTarget(direction)
+        showFlickableView(target.view, target.center)
         target.callback?()
     }
-    ///
-    ///
-    ///
-    private func _showFlickableView(_ view: UIView?, _ center: CGPoint) {
-        guard let view: UIView = view else {
-            return
-        }
-        view.frame.size = self.frame.size
+
+    private func showFlickableView(_ view: UIView?, _ center: CGPoint) {
+        guard let view else { return }
+        view.frame.size = frame.size
         view.center = center
-        self.clipsToBounds = false
-        UIView.animate(
-            withDuration: self._settings.animationDuration.show,
-            animations: { [weak view] in
-                view?.alpha = 1.0
+        clipsToBounds = false
+        UIView.animate(withDuration: showDuration) {
+            view.alpha = 1
+        } completion: { _ in
+            UIView.animate(withDuration: self.hideDuration, delay: self.stayDuration, options: .curveEaseIn) {
+                view.alpha = 0
+            } completion: { _ in
+                self.clipsToBounds = true
             }
-        ) { [weak self, weak view] (_) in
-            guard let self = self else {
-                return
-            }
-            UIView.animate(
-                withDuration: self._settings.animationDuration.hide,
-                delay: self._settings.animationDuration.stay,
-                options: UIView.AnimationOptions.curveEaseIn,
-                animations: { [weak view] in
-                    view?.alpha = 0.0
-                },
-                completion: { [weak self] (_) in
-                    self?.clipsToBounds = true
-                }
-            )
         }
     }
-    ///
-    // MARK: -------------------- long press
-    ///
-    ///
-    ///
-    @objc private func _longPressed(_ gesture: UILongPressGestureRecognizer) {
+
+    // MARK: - Long press
+
+    @objc private func longPressed(_ gesture: UILongPressGestureRecognizer) {
         if gesture.state == .began {
-            self.clipsToBounds = false
-            self._showAndHideAllFlickableViews(isHidden: false)
-            self._panStart = gesture.location(in: self)
+            clipsToBounds = false
+            showAndHideAllFlickableViews(isHidden: false)
+            panStart = gesture.location(in: self)
             return
         }
         if gesture.state == .changed {
             let point: CGPoint = gesture.location(in: self)
-            let direction: FABoLLFlickableButton._PanDirection = self._getPanDirection(point)
+            let direction: FABoLLFlickableButton.PanDirection = getPanDirection(point)
             if direction == .none {
                 return
             }
-            self._panShowFlickableView(direction)
+            panShowFlickableView(direction)
             return
         }
         let point: CGPoint = gesture.location(in: self)
-        let direction: FABoLLFlickableButton._PanDirection = self._getPanDirection(point)
+        let direction: FABoLLFlickableButton.PanDirection = getPanDirection(point)
         if direction == .none {
-            self._hideAllFlickableView()
+            hideAllFlickableView()
         } else {
-            self._panExecuteFlickableView(direction)
+            panExecuteFlickableView(direction)
         }
     }
-    ///
-    ///
-    ///
-    private func _showAndHideAllFlickableViews(isHidden: Bool) {
-        self.alpha = (isHidden) ? 1.0 : 0.5
-        FABoLLFlickableButton._PanDirection.allCases.forEach { (direction: FABoLLFlickableButton._PanDirection) in
-            let target: (view: UIView?, center: CGPoint, callback: (() -> Void)?) = self._getTarget(direction)
-            target.view?.frame.size = self.frame.size
+
+    private func showAndHideAllFlickableViews(isHidden: Bool) {
+        alpha = isHidden ? 1 : 0.5
+        FABoLLFlickableButton.PanDirection.allCases.forEach { direction in
+            let target: FlickableView = getTarget(direction)
+            target.view?.frame.size = frame.size
             target.view?.center = target.center
-            target.view?.alpha = (isHidden == true) ? 0.0 : 1.0
+            target.view?.alpha = isHidden ? 0 : 1
         }
     }
-    ///
-    ///
-    ///
-    private func _getPanDirection(_ point: CGPoint) -> FABoLLFlickableButton._PanDirection {
-        if
-            abs(point.x - self._panStart.x) < self.frame.width * 0.5 &&
-            abs(point.y - self._panStart.y) < self.frame.height * 0.5
-        {
+
+    private func getPanDirection(_ point: CGPoint) -> FABoLLFlickableButton.PanDirection {
+        if abs(point.x - panStart.x) < frame.width * 0.5 && abs(point.y - panStart.y) < frame.height * 0.5 {
             return .none
         }
-        let diffX: CGFloat = point.x - self._panStart.x
-        let diffY: CGFloat = point.y - self._panStart.y
+        let diffX: CGFloat = point.x - panStart.x
+        let diffY: CGFloat = point.y - panStart.y
         if abs(diffX) < abs(diffY) {
-            return (diffY < 0.0)
-                ? FABoLLFlickableButton._PanDirection.up
-                : FABoLLFlickableButton._PanDirection.down
+            return (diffY < 0) ? .up : .down
         } else {
-            return (diffX < 0.0)
-                ? FABoLLFlickableButton._PanDirection.left
-                : FABoLLFlickableButton._PanDirection.right
+            return (diffX < 0) ? .left : .right
         }
     }
-    ///
     /// Hide all Flickable views except target (parameter `to`)
-    ///
-    private func _panShowFlickableView(_ to: FABoLLFlickableButton._PanDirection) {
-        FABoLLFlickableButton._PanDirection.allCases
-            .filter { (direction: FABoLLFlickableButton._PanDirection) -> Bool in
-                direction != to
-            }
-            .forEach { (direction: FABoLLFlickableButton._PanDirection) in
-                self._getTarget(direction).view?.alpha = 0.0
-            }
+    private func panShowFlickableView(_ to: FABoLLFlickableButton.PanDirection) {
+        FABoLLFlickableButton.PanDirection.allCases
+            .filter { $0 != to }
+            .forEach { getTarget($0).view?.alpha = 0 }
     }
-    ///
-    ///
-    ///
-    private func _hideAllFlickableView() {
-        UIView.animate(
-            withDuration: self._settings.animationDuration.hide,
-            delay: self._settings.animationDuration.stay,
-            options: UIView.AnimationOptions.curveEaseIn,
-            animations: { [weak self] in
-                self?.alpha = 1.0
-                self?._settings.views.up?.alpha = 0.0
-                self?._settings.views.left?.alpha = 0.0
-                self?._settings.views.down?.alpha = 0.0
-                self?._settings.views.right?.alpha = 0.0
-            },
-            completion: { [weak self] (_) in
-                self?.clipsToBounds = true
-            }
-        )
+
+    private func hideAllFlickableView() {
+        UIView.animate(withDuration: hideDuration, delay: stayDuration, options: .curveEaseIn) {
+            self.alpha = 1
+            self.settings.views.up?.alpha = 0
+            self.settings.views.left?.alpha = 0
+            self.settings.views.down?.alpha = 0
+            self.settings.views.right?.alpha = 0
+        } completion: { _ in
+            self.clipsToBounds = true
+        }
     }
-    ///
-    ///
-    ///
-    private func _panExecuteFlickableView(_ direction: FABoLLFlickableButton._PanDirection) {
-        self.alpha = 1.0
-        UIView.animate(
-            withDuration: self._settings.animationDuration.hide,
-            delay: self._settings.animationDuration.stay,
-            options: UIView.AnimationOptions.curveEaseIn,
-            animations: { [weak self] in
-                self?._getTarget(direction).view?.alpha = 0.0
-            },
-            completion: { [weak self] (_) in
-                self?.clipsToBounds = true
-            }
-        )
-        self._getTarget(direction).callback?()
+
+    private func panExecuteFlickableView(_ direction: FABoLLFlickableButton.PanDirection) {
+        alpha = 1
+        UIView.animate(withDuration: hideDuration, delay: stayDuration, options: .curveEaseIn) {
+            self.getTarget(direction).view?.alpha = 0
+        } completion: { _ in
+            self.clipsToBounds = true
+        }
+        getTarget(direction).callback?()
     }
 }
+
+private extension UISwipeGestureRecognizer.Direction {
+
+    var panDirection: FABoLLFlickableButton.PanDirection {
+        switch self {
+        case .up:
+            .up
+        case .left:
+            .left
+        case .down:
+            .down
+        case .right:
+            .right
+        default:
+            .none
+        }
+    }
+}
+
