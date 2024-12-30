@@ -1,22 +1,22 @@
+//
+//  FABoLLFlickableButtonTest
+//
+//  © 2023 Masakiyo Tachikawa
+//
+
+import Testing
 import XCTest
 @testable import FABoLLFlickableButton
 
-final class FABoLLFlickableButtonTests: XCTestCase {
-
-    // MARK: - Static Properties
-
-    static var allTests = [
-        ("testAllDirectionsAdd", testAllDirectionsAdd),
-    ]
-
-    private static let ButtonSize: CGSize = .init(width: 50, height: 50)
-
-    // MARK: - Properties
+@MainActor
+struct FABoLLFlickableButtonTest {
 
     private let base: UIView = .init(frame: UIScreen.main.bounds)
-
     private let flickableButton: FABoLLFlickableButton = .init(
-        frame: CGRect(origin: .zero, size: FABoLLFlickableButtonTests.ButtonSize)
+        frame: CGRect(
+            origin: .zero,
+            size: .init(width: 50, height: 50)
+        )
     )
 
     private var up: UILabel {
@@ -56,27 +56,23 @@ final class FABoLLFlickableButtonTests: XCTestCase {
         return right
     }
 
-    // MARK: - tests
 
-    override func setUp() {
-        super.setUp()
+    @Test func test() async throws {
         base.addSubview(flickableButton)
         flickableButton.center = base.center
-    }
-
-    func testAllDirectionsAdd() {
-        flickableButton.setFlickable(
-            settings: FABoLLFlickableButtonSettings(
-                views: (up: up, left: left, down: down, right: right),
-                margins: (up: 10, left: 10, down: 10, right: 10),
-                animationDuration: nil
-            ),
-            callbackUp: nil,
-            callbackLeft: nil,
-            callbackDown: nil,
-            callbackRight: nil
+        var settings: FABoLLFlickableButtonSettings = .init(
+            upView: up,
+            leftView: left,
+            downView: down,
+            rightView: right,
+            upMargin: 10,
+            leftMargin: 10,
+            downMargin: 10,
+            rightMargin: 10
         )
-        let titles: [String] = [
+        // All
+        flickableButton.setFlickable(settings: settings)
+        var titles: [String] = [
             "UP",
             "⚡️",
             "Left",
@@ -88,21 +84,11 @@ final class FABoLLFlickableButtonTests: XCTestCase {
             XCTAssertNotNil(label.text)
             XCTAssertTrue(titles.contains(label.text!))
         }
-    }
-
-    func testUpAndDownDirectionsAdd() {
-        flickableButton.setFlickable(
-            settings: FABoLLFlickableButtonSettings(
-                views: (up: up, left: nil, down: down, right: nil),
-                margins: (up: 10, left: 10, down: 10, right: 10),
-                animationDuration: nil
-            ),
-            callbackUp: nil,
-            callbackLeft: nil,
-            callbackDown: nil,
-            callbackRight: nil
-        )
-        let titles: [String] = [
+        // Up and Down
+        settings.update(\.leftView, nil)
+        settings.update(\.rightView, nil)
+        flickableButton.setFlickable(settings: settings)
+        titles = [
             "UP",
             "⚡️",
         ]
@@ -112,21 +98,13 @@ final class FABoLLFlickableButtonTests: XCTestCase {
             XCTAssertNotNil(label.text)
             XCTAssertTrue(titles.contains(label.text!))
         }
-    }
-
-    func testLeftAndRightDirectionsAdd() {
-        flickableButton.setFlickable(
-            settings: FABoLLFlickableButtonSettings(
-                views: (up: nil, left: left, down: nil, right: right),
-                margins: nil,
-                animationDuration: nil
-            ),
-            callbackUp: nil,
-            callbackLeft: nil,
-            callbackDown: nil,
-            callbackRight: nil
-        )
-        let titles: [String] = [
+        // Left and Right
+        settings.update(\.upView, nil)
+        settings.update(\.downView, nil)
+        settings.update(\.leftView, left)
+        settings.update(\.rightView, right)
+        flickableButton.setFlickable(settings: settings)
+        titles = [
             "Left",
             "✋",
         ]
@@ -136,20 +114,10 @@ final class FABoLLFlickableButtonTests: XCTestCase {
             XCTAssertNotNil(label.text)
             XCTAssertTrue(titles.contains(label.text!))
         }
-    }
-
-    func testAllDirectionsNill() {
-        flickableButton.setFlickable(
-            settings: FABoLLFlickableButtonSettings(
-                views: (up: nil, left: nil, down: nil, right: nil),
-                margins: nil,
-                animationDuration: nil
-            ),
-            callbackUp: nil,
-            callbackLeft: nil,
-            callbackDown: nil,
-            callbackRight: nil
-        )
+        // None
+        settings.update(\.leftView, nil)
+        settings.update(\.rightView, nil)
+        flickableButton.setFlickable(settings: settings)
         XCTAssertEqual(base.subviews.count, 1)
         base.subviews.forEach { view in
             if let _ = view as? UILabel {

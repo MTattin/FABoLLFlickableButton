@@ -1,6 +1,9 @@
 # FABoLLFlickableButton
 
-[![FABoLL](https://custom-icon-badges.herokuapp.com/badge/license-FABoLL-8BB80A.svg?logo=law&logoColor=white)]()　[![iOS 16.0](https://custom-icon-badges.herokuapp.com/badge/iOS-16.0-007bff.svg?logo=apple&logoColor=white)]()　[![Xcode 15.3](https://custom-icon-badges.herokuapp.com/badge/Xcode-15.3-007bff.svg?logo=Xcode&logoColor=white)]()　[![Swift 5.9](https://custom-icon-badges.herokuapp.com/badge/Swift-5.9-df5c43.svg?logo=Swift&logoColor=white)]()
+[![FABoLL](https://custom-icon-badges.herokuapp.com/badge/license-FABoLL-8BB80A.svg?logo=law&logoColor=white)]()　
+[![iOS 16.0](https://custom-icon-badges.herokuapp.com/badge/iOS-16.0-007bff.svg?logo=apple&logoColor=white)]()　
+[![Xcode 16.2](https://custom-icon-badges.herokuapp.com/badge/Xcode-16.2-007bff.svg?logo=Xcode&logoColor=white)]()　
+[![Swift 6.0](https://custom-icon-badges.herokuapp.com/badge/Swift-6.0-df5c43.svg?logo=Swift&logoColor=white)]()
 
 You can add flick action to UIButton.  
 If you use `FABoLLFlickableButton`, you can receive callback from  swipe gestures.
@@ -31,13 +34,39 @@ right.backgroundColor = .blue
 right.clipsToBounds = true
 right.layer.cornerRadius = button.frame.size.width * 0.5
 
-/// Add flick actions
+// Add flick actions
 button.setFlickable(
     settings: FABoLLFlickableButtonSettings(
-        views: (up: up, left: left, down: down, right: right),
-        margins: (up: 5., left: 10, down: 5, right: 10),
-        animationDuration: nil
+        upView: up,
+        leftView: left,
+        downView: down,
+        rightView: right,
+        upMargin: 5,
+        downMargin: 5
     ),
+    callbackUp: {
+        print("up")
+    },
+    callbackLeft: {
+        print("left")
+    },
+    callbackDown: {
+        print("down")
+    },
+    callbackRight: {
+        print("right")
+    }
+)
+// OR
+var settings: FABoLLFlickableButtonSettings = .init()
+settings.update(\.upView, up)
+settings.update(\.leftView, left)
+settings.update(\.downView, down)
+settings.update(\.rightView, right)
+settings.update(\.upMargin, 5)
+settings.update(\.downMargin, 5)
+button.setFlickable(
+    settings: settings,
     callbackUp: {
         print("up")
     },
